@@ -1,0 +1,51 @@
+import React from 'react';
+import Link from 'next/link';
+import Button from '../ui/Button';
+
+export default function Header() {
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+      <div className="container mx-auto px-4 py-2 flex items-center justify-between">
+        <Link href="/" className="flex items-center">
+          <div className="w-40 h-12 relative overflow-hidden">
+            <img
+              src="/logo.jpeg"
+              alt="askexperts.io"
+              className="object-contain"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectPosition: 'left center'
+              }}
+            />
+          </div>
+        </Link>
+        
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link href="#how-it-works" className="text-gray-600 hover:text-[#0F172A]">
+            How It Works
+          </Link>
+          <Link href="#features" className="text-gray-600 hover:text-[#0F172A]">
+            Features
+          </Link>
+          <Link href="#for-builders" className="text-gray-600 hover:text-[#0F172A]">
+            For Builders
+          </Link>
+          <Link href="#docs" className="text-gray-600 hover:text-[#0F172A]">
+            Docs
+          </Link>
+        </nav>
+        
+        <div className="flex items-center space-x-4">
+          <Button 
+            href="https://github.com/yourusername/askexperts.io" 
+            variant="primary"
+            external
+          >
+            ⚡ Get Started
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}

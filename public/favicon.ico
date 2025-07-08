@@ -1,0 +1,6 @@
+<!--
+  This site now uses /logo.jpeg as the favicon through Next.js metadata configuration.
+  See src/app/layout.tsx for the configuration.
+  
+  If you need to revert to using favicon.ico, remove the icons configuration from the metadata.
+-->

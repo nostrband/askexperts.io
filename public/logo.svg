@@ -1,0 +1,7 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Lightning Bolt -->
+  <path d="M30 5L10 25H25L20 45L40 25H25L30 5Z" fill="#F7931A" />
+  
+  <!-- Text -->
+  <text x="55" y="32" font-family="Arial" font-weight="bold" font-size="24" fill="#0F172A">askexperts.io</text>
+</svg>
