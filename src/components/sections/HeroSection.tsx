@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Button from '../ui/Button';
 
 export default function HeroSection() {
@@ -40,11 +41,14 @@ export default function HeroSection() {
               <h3 className="text-lg font-semibold">Protocol Diagram</h3>
             </div>
             <div className="flex justify-center">
-              <img
-                src="/diagram.svg"
-                alt="Protocol Diagram showing AI chat → Expert Discovery → Encrypted Q&A → Lightning payment"
-                className="w-full max-w-3xl h-auto"
-              />
+              <div className="relative w-full max-w-3xl h-[300px]">
+                <Image
+                  src="/diagram.svg"
+                  alt="Protocol Diagram showing AI chat → Expert Discovery → Encrypted Q&A → Lightning payment"
+                  fill
+                  className="object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>

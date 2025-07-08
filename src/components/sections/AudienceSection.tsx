@@ -29,7 +29,7 @@ export default function AudienceSection() {
             </ul>
             
             <p className="text-lg font-medium text-center">
-              You're in the right place.
+              You&apos;re in the right place.
             </p>
           </div>
         </div>

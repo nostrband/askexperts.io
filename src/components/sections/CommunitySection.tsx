@@ -18,7 +18,7 @@ export default function CommunitySection() {
           </h2>
           
           <p className="text-lg text-gray-600 mb-8">
-            We're building this for open AI builders, Bitcoiners, and those who believe expertise should be decentralized.
+            We&apos;re building this for open AI builders, Bitcoiners, and those who believe expertise should be decentralized.
           </p>
           
           <div className="grid md:grid-cols-2 gap-4 mb-12">

@@ -47,7 +47,7 @@ export default function CTASection() {
           </div>
           
           <p className="text-lg text-gray-600 mb-8">
-            This isn't another black-box AI platform. We publish everything — protocol, server code, Expert logic. Run it yourself or connect to the ecosystem.
+            This isn&apos;t another black-box AI platform. We publish everything — protocol, server code, Expert logic. Run it yourself or connect to the ecosystem.
           </p>
         </div>
       </div>

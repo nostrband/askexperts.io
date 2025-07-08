@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Button from '../ui/Button';
 
 export default function Header() {
@@ -8,13 +9,12 @@ export default function Header() {
       <div className="container mx-auto px-4 py-2 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <div className="w-40 h-12 relative overflow-hidden">
-            <img
+            <Image
               src="/logo.jpeg"
               alt="askexperts.io"
+              fill
               className="object-contain"
               style={{
-                width: '100%',
-                height: '100%',
                 objectPosition: 'left center'
               }}
             />
