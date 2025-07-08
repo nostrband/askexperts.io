@@ -41,7 +41,7 @@ export default function HeroSection() {
               <h3 className="text-lg font-semibold">Protocol Diagram</h3>
             </div>
             <div className="flex justify-center">
-              <div className="relative w-full max-w-3xl h-[300px]">
+              <div className="relative w-full max-w-3xl h-[600px]">
                 <Image
                   src="/diagram.svg"
                   alt="Protocol Diagram showing AI chat → Expert Discovery → Encrypted Q&A → Lightning payment"
