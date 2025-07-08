@@ -13,6 +13,7 @@ export default function Header() {
               src="/logo.jpeg"
               alt="askexperts.io"
               fill
+              sizes="160px" /* w-40 = 10rem = 160px */
               className="object-contain"
               style={{
                 objectPosition: 'left center'
