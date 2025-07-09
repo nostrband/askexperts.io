@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
-import { storage } from '@/services/storage';
-import { nwc } from '@getalby/sdk';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Button from "@/components/ui/Button";
+import { storage } from "@/services/storage";
+import { nwc } from "@getalby/sdk";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function WalletPage() {
   const router = useRouter();
@@ -14,24 +14,26 @@ export default function WalletPage() {
   const [error, setError] = useState<string | null>(null);
   const [nwcClient, setNwcClient] = useState<nwc.NWCClient | null>(null);
   const [isConnectedWallet, setIsConnectedWallet] = useState(false);
-  
+
   // Modal states
   const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [topupAmount, setTopupAmount] = useState<number>(0);
-  const [withdrawInvoice, setWithdrawInvoice] = useState('');
+  const [withdrawInvoice, setWithdrawInvoice] = useState("");
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [invoice, setInvoice] = useState<string | null>(null);
   const [paymentHash, setPaymentHash] = useState<string | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<'pending' | 'paid' | 'expired' | null>(null);
-  
+  const [paymentStatus, setPaymentStatus] = useState<
+    "pending" | "paid" | "expired" | null
+  >(null);
+
   // Polling interval reference
   const paymentCheckInterval = useRef<NodeJS.Timeout | null>(null);
 
   // Check if user is logged in, if not redirect to landing page
   useEffect(() => {
     if (!storage.isLoggedIn()) {
-      router.push('/');
+      router.push("/");
     }
   }, [router]);
 
@@ -39,73 +41,45 @@ export default function WalletPage() {
     const initializeWallet = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // First check if we have a connected NWC string
         const connectedNwcString = storage.getConnectedNwcString();
-        
+
         // If not, check for the regular NWC string from signup
         const nwcString = connectedNwcString || storage.getNwcString();
-        
+
         if (!nwcString) {
-          setError('No wallet connection found');
+          setError("No wallet connection found");
           setIsLoading(false);
           return;
         }
-        
+
         // Set if this is a connected wallet or built-in wallet
         setIsConnectedWallet(!!connectedNwcString);
-        
+
         // Initialize NWC client
         const client = new nwc.NWCClient({
           nostrWalletConnectUrl: nwcString,
         });
-        
+
         setNwcClient(client);
-        
+
         // Get balance
         const balanceResponse = await client.getBalance();
         setBalance(balanceResponse.balance);
-        
+
         setIsLoading(false);
       } catch (err) {
-        console.error('Error initializing wallet:', err);
-        setError('Failed to connect to wallet');
+        console.error("Error initializing wallet:", err);
+        setError("Failed to connect to wallet");
         setIsLoading(false);
       }
     };
-    
+
     initializeWallet();
   }, []);
-  
-  // Function to check payment status
-  const checkPaymentStatus = async () => {
-    if (!nwcClient || !paymentHash) return;
-    
-    try {
-      const invoiceStatus = await nwcClient.lookupInvoice({
-        payment_hash: paymentHash,
-      });
-      
-      if (invoiceStatus.settled_at && invoiceStatus.settled_at > 0) {
-        // Payment received
-        setPaymentStatus('paid');
-        
-        // Clear the interval
-        if (paymentCheckInterval.current) {
-          clearInterval(paymentCheckInterval.current);
-          paymentCheckInterval.current = null;
-        }
-        
-        // Update balance
-        const balanceResponse = await nwcClient.getBalance();
-        setBalance(balanceResponse.balance);
-      }
-    } catch (err) {
-      console.error('Error checking payment status:', err);
-    }
-  };
-  
+
   // Clean up interval on unmount
   useEffect(() => {
     return () => {
@@ -114,87 +88,120 @@ export default function WalletPage() {
       }
     };
   }, []);
-  
+
   // Start polling when payment hash is set
   useEffect(() => {
-    if (paymentHash && paymentStatus === 'pending' && !paymentCheckInterval.current) {
+
+    // Function to check payment status
+    const checkPaymentStatus = async () => {
+      if (!nwcClient || !paymentHash) return;
+
+      try {
+        const invoiceStatus = await nwcClient.lookupInvoice({
+          payment_hash: paymentHash,
+        });
+
+        if (invoiceStatus.settled_at && invoiceStatus.settled_at > 0) {
+          // Payment received
+          setPaymentStatus("paid");
+
+          // Clear the interval
+          if (paymentCheckInterval.current) {
+            clearInterval(paymentCheckInterval.current);
+            paymentCheckInterval.current = null;
+          }
+
+          // Update balance
+          const balanceResponse = await nwcClient.getBalance();
+          setBalance(balanceResponse.balance);
+        }
+      } catch (err) {
+        console.error("Error checking payment status:", err);
+      }
+    };
+
+    if (
+      paymentHash &&
+      paymentStatus === "pending" &&
+      !paymentCheckInterval.current
+    ) {
       // Check immediately
       checkPaymentStatus();
-      
+
       // Then set up interval (every 3 seconds)
       paymentCheckInterval.current = setInterval(checkPaymentStatus, 3000);
     }
-    
+
     return () => {
       if (paymentCheckInterval.current) {
         clearInterval(paymentCheckInterval.current);
         paymentCheckInterval.current = null;
       }
     };
-  }, [paymentHash, paymentStatus, checkPaymentStatus]);
-  
+  }, [paymentHash, paymentStatus, nwcClient]);
+
   const handleTopup = async () => {
     if (!nwcClient) {
-      setError('Wallet not connected');
+      setError("Wallet not connected");
       return;
     }
-    
+
     if (topupAmount <= 0) {
       return;
     }
-    
+
     try {
       setIsLoading(true);
       // Reset payment status
-      setPaymentStatus('pending');
+      setPaymentStatus("pending");
       setPaymentHash(null);
-      
+
       // Use the nwcClient to create an invoice
       const invoiceResponse = await nwcClient.makeInvoice({
         amount: topupAmount * 1000, // sats to ms
-        description: 'Topup AskExperts wallet',
+        description: "Topup AskExperts wallet",
         expiry: 2 * 60, // 2 minutes
       });
-      
+
       setInvoice(invoiceResponse.invoice);
       setPaymentHash(invoiceResponse.payment_hash);
       setIsLoading(false);
     } catch (err) {
-      console.error('Error creating invoice:', err);
-      setError('Failed to create invoice');
+      console.error("Error creating invoice:", err);
+      setError("Failed to create invoice");
       setIsLoading(false);
     }
   };
-  
+
   const handleWithdraw = async () => {
     if (!nwcClient) {
-      setError('Wallet not connected');
+      setError("Wallet not connected");
       return;
     }
-    
+
     if (!withdrawInvoice) {
       return;
     }
-    
+
     try {
       setIsWithdrawing(true);
-      
+
       // Use the nwcClient to pay the invoice
       await nwcClient.payInvoice({
         invoice: withdrawInvoice,
       });
-      
+
       // Update balance
       const balanceResponse = await nwcClient.getBalance();
       setBalance(balanceResponse.balance);
-      
+
       // Reset and close modal
-      setWithdrawInvoice('');
+      setWithdrawInvoice("");
       setIsWithdrawModalOpen(false);
       setIsWithdrawing(false);
     } catch (err) {
-      console.error('Error paying invoice:', err);
-      setError('Failed to pay invoice');
+      console.error("Error paying invoice:", err);
+      setError("Failed to pay invoice");
       setIsWithdrawing(false);
     }
   };
@@ -202,9 +209,9 @@ export default function WalletPage() {
   return (
     <div className="max-w-2xl mx-auto py-12">
       <h1 className="text-3xl font-bold mb-4 text-center">
-        {isConnectedWallet ? 'Connected wallet' : 'Wallet'}
+        {isConnectedWallet ? "Connected wallet" : "Wallet"}
       </h1>
-      
+
       {/* Balance display */}
       <div className="flex flex-col items-center justify-center my-8">
         {isLoading ? (
@@ -219,11 +226,11 @@ export default function WalletPage() {
         ) : (
           <div className="flex items-center text-4xl font-bold">
             <span className="text-[#F7931A] mr-2">₿</span>
-            <span>{balance !== null ? Math.floor(balance / 1000) : '---'}</span>
+            <span>{balance !== null ? Math.floor(balance / 1000) : "---"}</span>
           </div>
         )}
       </div>
-      
+
       {/* Action buttons - only show for built-in wallet */}
       {!isConnectedWallet && (
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -235,7 +242,7 @@ export default function WalletPage() {
           >
             Topup
           </Button>
-          
+
           <Button
             variant="secondary"
             onClick={() => setIsWithdrawModalOpen(true)}
@@ -245,7 +252,7 @@ export default function WalletPage() {
           </Button>
         </div>
       )}
-      
+
       {/* Topup Modal */}
       {isTopupModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -283,9 +290,9 @@ export default function WalletPage() {
                 </svg>
               </button>
             </div>
-            
+
             <div className="mb-6">
-              {paymentStatus === 'paid' ? (
+              {paymentStatus === "paid" ? (
                 <div className="flex flex-col items-center justify-center">
                   <div className="w-64 h-64 flex items-center justify-center">
                     <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center animate-pulse">
@@ -314,7 +321,7 @@ export default function WalletPage() {
                   <p className="mb-4 text-center">
                     Scan this QR code using your Lightning Wallet
                   </p>
-                  
+
                   <div className="flex justify-center">
                     <div className="bg-white p-4 rounded-lg">
                       {/* QR code using qrcode.react */}
@@ -328,12 +335,12 @@ export default function WalletPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mt-4">
                     <p className="text-sm text-gray-500 text-center mb-2">
                       Invoice will expire in 2 minutes
                     </p>
-                    
+
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#6A4C93] mr-2"></div>
                       <p className="text-sm text-[#6A4C93]">
@@ -350,17 +357,19 @@ export default function WalletPage() {
                   <input
                     type="number"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#6A4C93]"
-                    value={topupAmount || ''}
-                    onChange={(e) => setTopupAmount(parseInt(e.target.value) || 0)}
+                    value={topupAmount || ""}
+                    onChange={(e) =>
+                      setTopupAmount(parseInt(e.target.value) || 0)
+                    }
                     placeholder="Enter amount in sats"
                     min="1"
                   />
                 </>
               )}
             </div>
-            
+
             <div className="flex justify-end">
-              {paymentStatus === 'paid' ? (
+              {paymentStatus === "paid" ? (
                 <Button
                   variant="primary"
                   onClick={() => {
@@ -406,7 +415,7 @@ export default function WalletPage() {
           </div>
         </div>
       )}
-      
+
       {/* Withdraw Modal */}
       {isWithdrawModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -417,7 +426,7 @@ export default function WalletPage() {
                 className="text-gray-500 hover:text-gray-700"
                 onClick={() => {
                   setIsWithdrawModalOpen(false);
-                  setWithdrawInvoice('');
+                  setWithdrawInvoice("");
                 }}
               >
                 <svg
@@ -436,7 +445,7 @@ export default function WalletPage() {
                 </svg>
               </button>
             </div>
-            
+
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Lightning Invoice
@@ -449,14 +458,14 @@ export default function WalletPage() {
                 placeholder="Invoice"
               />
             </div>
-            
+
             <div className="flex justify-end">
               <Button
                 variant="secondary"
                 className="mr-2"
                 onClick={() => {
                   setIsWithdrawModalOpen(false);
-                  setWithdrawInvoice('');
+                  setWithdrawInvoice("");
                 }}
               >
                 Cancel

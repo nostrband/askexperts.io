@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
-import { storage } from '@/services/storage';
-import { nwc } from '@getalby/sdk';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Button from "@/components/ui/Button";
+import { storage } from "@/services/storage";
+import { nwc } from "@getalby/sdk";
+import { QRCodeSVG } from "qrcode.react";
 
 const TOPUP_AMOUNT_SATS = 1000;
 const EXPIRY_MIN = 2;
@@ -16,16 +16,18 @@ export default function WalletPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nwcClient, setNwcClient] = useState<nwc.NWCClient | null>(null);
-  
+
   // Modal states
   const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
-  const [connectString, setConnectString] = useState('');
+  const [connectString, setConnectString] = useState("");
   const [connectError, setConnectError] = useState<string | null>(null);
   const [invoice, setInvoice] = useState<string | null>(null);
   const [paymentHash, setPaymentHash] = useState<string | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<'pending' | 'paid' | 'expired' | null>(null);
-  
+  const [paymentStatus, setPaymentStatus] = useState<
+    "pending" | "paid" | "expired" | null
+  >(null);
+
   // Polling interval reference
   const paymentCheckInterval = useRef<NodeJS.Timeout | null>(null);
 
@@ -33,76 +35,48 @@ export default function WalletPage() {
     const initializeWallet = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // First check if we have a connected NWC string
         const connectedNwcString = storage.getConnectedNwcString();
-        
+
         // If not, check for the regular NWC string from signup
         const nwcString = connectedNwcString || storage.getNwcString();
-        
+
         if (!nwcString) {
-          setError('No wallet connection found');
+          setError("No wallet connection found");
           setIsLoading(false);
           return;
         }
-        
+
         // Initialize NWC client
         const client = new nwc.NWCClient({
           nostrWalletConnectUrl: nwcString,
         });
-        
+
         setNwcClient(client);
-        
+
         // Get balance
         const balanceResponse = await client.getBalance();
         setBalance(balanceResponse.balance);
-        
+
         setIsLoading(false);
       } catch (err) {
-        console.error('Error initializing wallet:', err);
-        setError('Failed to connect to wallet');
+        console.error("Error initializing wallet:", err);
+        setError("Failed to connect to wallet");
         setIsLoading(false);
       }
     };
-    
+
     // Save NWC string from signup to localStorage if not already saved
     const userData = storage.getUserData();
     if (userData?.nwc && !storage.getNwcString()) {
       storage.saveNwcString(userData.nwc);
     }
-    
+
     initializeWallet();
   }, []);
-  
-  // Function to check payment status
-  const checkPaymentStatus = async () => {
-    if (!nwcClient || !paymentHash) return;
-    
-    try {
-      const invoiceStatus = await nwcClient.lookupInvoice({
-        payment_hash: paymentHash,
-      });
-      
-      if (invoiceStatus.settled_at && invoiceStatus.settled_at > 0) {
-        // Payment received
-        setPaymentStatus('paid');
-        
-        // Clear the interval
-        if (paymentCheckInterval.current) {
-          clearInterval(paymentCheckInterval.current);
-          paymentCheckInterval.current = null;
-        }
-        
-        // Update balance
-        const balanceResponse = await nwcClient.getBalance();
-        setBalance(balanceResponse.balance);
-      }
-    } catch (err) {
-      console.error('Error checking payment status:', err);
-    }
-  };
-  
+
   // Clean up interval on unmount
   useEffect(() => {
     return () => {
@@ -111,85 +85,119 @@ export default function WalletPage() {
       }
     };
   }, []);
-  
+
   // Start polling when payment hash is set
   useEffect(() => {
-    if (paymentHash && paymentStatus === 'pending' && !paymentCheckInterval.current) {
+    // Function to check payment status
+    const checkPaymentStatus = async () => {
+      if (!nwcClient || !paymentHash) return;
+
+      try {
+        const invoiceStatus = await nwcClient.lookupInvoice({
+          payment_hash: paymentHash,
+        });
+
+        if (invoiceStatus.settled_at && invoiceStatus.settled_at > 0) {
+          // Payment received
+          setPaymentStatus("paid");
+
+          // Clear the interval
+          if (paymentCheckInterval.current) {
+            clearInterval(paymentCheckInterval.current);
+            paymentCheckInterval.current = null;
+          }
+
+          // Update balance
+          const balanceResponse = await nwcClient.getBalance();
+          setBalance(balanceResponse.balance);
+        }
+      } catch (err) {
+        console.error("Error checking payment status:", err);
+      }
+    };
+
+    if (
+      paymentHash &&
+      paymentStatus === "pending" &&
+      !paymentCheckInterval.current
+    ) {
       // Check immediately
       checkPaymentStatus();
-      
+
       // Then set up interval (every 3 seconds)
       paymentCheckInterval.current = setInterval(checkPaymentStatus, 3000);
     }
-    
+
     return () => {
       if (paymentCheckInterval.current) {
         clearInterval(paymentCheckInterval.current);
         paymentCheckInterval.current = null;
       }
     };
-  }, [paymentHash, paymentStatus, checkPaymentStatus]);
-  
+  }, [paymentHash, paymentStatus, nwcClient]);
+
   const handleTopup = async () => {
     if (!nwcClient) {
-      setError('Wallet not connected');
+      setError("Wallet not connected");
       return;
     }
-    
+
     try {
       setIsLoading(true);
       // Reset payment status
-      setPaymentStatus('pending');
+      setPaymentStatus("pending");
       setPaymentHash(null);
-      
+
       // Use the nwcClient to create an invoice
       const invoiceResponse = await nwcClient.makeInvoice({
         amount: TOPUP_AMOUNT_SATS * 1000, // sats to ms
-        description: 'Topup AskExperts wallet',
+        description: "Topup AskExperts wallet",
         expiry: EXPIRY_MIN * 60,
       });
-      
+
       setInvoice(invoiceResponse.invoice);
       setPaymentHash(invoiceResponse.payment_hash);
       setIsTopupModalOpen(true);
       setIsLoading(false);
     } catch (err) {
-      console.error('Error creating invoice:', err);
-      setError('Failed to create invoice');
+      console.error("Error creating invoice:", err);
+      setError("Failed to create invoice");
       setIsLoading(false);
     }
   };
-  
+
   const handleConnect = async () => {
     if (!connectString) {
-      setConnectError('Please enter a valid NWC connection string');
+      setConnectError("Please enter a valid NWC connection string");
       return;
     }
-    
+
     try {
       setIsLoading(true);
       setConnectError(null);
-      
+
       // Initialize new NWC client with provided string
       const client = new nwc.NWCClient({
         nostrWalletConnectUrl: connectString,
       });
-      
+
       // Test connection by getting balance
       const balanceResponse = await client.getBalance();
-      
+
       // If successful, save the connected string
       storage.saveConnectedNwcString(connectString);
       setNwcClient(client);
       setBalance(balanceResponse.balance);
-      
+
       // Close modal and reset form
       setIsConnectModalOpen(false);
-      setConnectString('');
+      setConnectString("");
       setIsLoading(false);
     } catch (err) {
-      console.error('Error connecting wallet:', err);
-      setConnectError('Failed to connect to wallet. Please check your connection string.');
+      console.error("Error connecting wallet:", err);
+      setConnectError(
+        "Failed to connect to wallet. Please check your connection string."
+      );
       setIsLoading(false);
     }
   };
@@ -197,7 +205,7 @@ export default function WalletPage() {
   return (
     <div className="max-w-2xl mx-auto py-12">
       <h1 className="text-3xl font-bold mb-4 text-center">Wallet</h1>
-      
+
       {/* Balance display */}
       <div className="flex flex-col items-center justify-center my-8">
         {isLoading ? (
@@ -212,16 +220,18 @@ export default function WalletPage() {
         ) : (
           <div className="flex items-center text-4xl font-bold">
             <span className="text-[#F7931A] mr-2">₿</span>
-            <span>{balance !== null ? Math.floor(balance / 1000) : '---'}</span>
+            <span>{balance !== null ? Math.floor(balance / 1000) : "---"}</span>
           </div>
         )}
       </div>
-      
+
       {/* Info text */}
       <p className="text-lg text-gray-600 mb-8 text-center">
-        Experts are paid for each answer.<br/>Topup the built-in wallet to be able to ask experts.
+        Experts are paid for each answer.
+        <br />
+        Topup the built-in wallet to be able to ask experts.
       </p>
-      
+
       {/* Action buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Button
@@ -242,26 +252,28 @@ export default function WalletPage() {
           Connect wallet
         </Button> */}
       </div>
-      
+
       {/* Continue button - only shown when balance > 0 */}
       {balance !== null && Math.floor(balance / 1000) > 0 && (
         <div className="mt-8 flex justify-center">
           <Button
             variant="primary"
-            onClick={() => router.push('/home')}
+            onClick={() => router.push("/home")}
             className="w-full sm:w-auto px-8"
           >
             Continue
           </Button>
         </div>
       )}
-      
+
       {/* Topup Modal */}
       {isTopupModalOpen && invoice && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Topup with ₿ {TOPUP_AMOUNT_SATS}</h2>
+              <h2 className="text-xl font-bold">
+                Topup with ₿ {TOPUP_AMOUNT_SATS}
+              </h2>
               <button
                 className="text-gray-500 hover:text-gray-700"
                 onClick={() => {
@@ -292,9 +304,9 @@ export default function WalletPage() {
                 </svg>
               </button>
             </div>
-            
+
             <div className="mb-6">
-              {paymentStatus === 'paid' ? (
+              {paymentStatus === "paid" ? (
                 <div className="flex flex-col items-center justify-center">
                   <div className="w-64 h-64 flex items-center justify-center">
                     <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center animate-pulse">
@@ -323,7 +335,7 @@ export default function WalletPage() {
                   <p className="mb-4 text-center">
                     Scan this QR code using your Lightning Wallet
                   </p>
-                  
+
                   <div className="flex justify-center">
                     <div className="bg-white p-4 rounded-lg">
                       {/* QR code using qrcode.react */}
@@ -337,12 +349,12 @@ export default function WalletPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mt-4">
                     <p className="text-sm text-gray-500 text-center mb-2">
                       Invoice will expire in {EXPIRY_MIN} minutes
                     </p>
-                    
+
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#6A4C93] mr-2"></div>
                       <p className="text-sm text-[#6A4C93]">
@@ -353,10 +365,10 @@ export default function WalletPage() {
                 </>
               )}
             </div>
-            
+
             <div className="flex justify-end">
               <Button
-                variant={paymentStatus === 'paid' ? "primary" : "secondary"}
+                variant={paymentStatus === "paid" ? "primary" : "secondary"}
                 onClick={() => {
                   setIsTopupModalOpen(false);
                   // Clear interval when closing modal
@@ -369,13 +381,13 @@ export default function WalletPage() {
                   setPaymentHash(null);
                 }}
               >
-                {paymentStatus === 'paid' ? "Done" : "Close"}
+                {paymentStatus === "paid" ? "Done" : "Close"}
               </Button>
             </div>
           </div>
         </div>
       )}
-      
+
       {/* Connect Wallet Modal */}
       {isConnectModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -387,7 +399,7 @@ export default function WalletPage() {
                 onClick={() => {
                   setIsConnectModalOpen(false);
                   setConnectError(null);
-                  setConnectString('');
+                  setConnectString("");
                 }}
               >
                 <svg
@@ -406,7 +418,7 @@ export default function WalletPage() {
                 </svg>
               </button>
             </div>
-            
+
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 NWC connection string
@@ -422,7 +434,7 @@ export default function WalletPage() {
                 <p className="mt-2 text-sm text-red-600">{connectError}</p>
               )}
             </div>
-            
+
             <div className="flex justify-end">
               <Button
                 variant="secondary"
@@ -430,7 +442,7 @@ export default function WalletPage() {
                 onClick={() => {
                   setIsConnectModalOpen(false);
                   setConnectError(null);
-                  setConnectString('');
+                  setConnectString("");
                 }}
               >
                 Cancel

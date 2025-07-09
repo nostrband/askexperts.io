@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { storage } from '@/services/storage';
 import { nwc } from '@getalby/sdk';
 
 export default function HomeHeader() {
-  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,6 +97,13 @@ export default function HomeHeader() {
             {isMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100">
                 <Link
+                  href="/home"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
                   href="/home/mcp"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   onClick={() => setIsMenuOpen(false)}
@@ -112,7 +117,7 @@ export default function HomeHeader() {
                 >
                   Wallet
                 </Link>
-                <button
+                {/* <button
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   onClick={() => {
                     storage.clearUserData();
@@ -121,7 +126,7 @@ export default function HomeHeader() {
                   }}
                 >
                   Sign Out
-                </button>
+                </button> */}
               </div>
             )}
           </div>
