@@ -46,7 +46,7 @@ export default function ForBuildersSection() {
             
             <div className="text-center">
               <Button 
-                href="#protocol" 
+                href="https://github.com/nostrband/askexperts/blob/main/NIP-174.md" 
                 variant="primary"
               >
                 Explore the Protocol →

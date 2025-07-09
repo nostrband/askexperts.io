@@ -1,8 +1,14 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import Button from '../ui/Button';
+import { useRouter } from 'next/navigation';
+import { api } from '@/services/api';
+import { storage } from '@/services/storage';
 
 export default function HeroSection() {
+  const router = useRouter();
   return (
     <section className="pt-32 pb-16 md:pt-40 md:pb-24">
       <div className="container mx-auto px-4">
@@ -16,11 +22,24 @@ export default function HeroSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              href="https://github.com/yourusername/askexperts.io" 
+            <Button
               variant="primary"
               className="text-lg px-8"
-              external
+              onClick={async () => {
+                try {
+                  // Show loading state (could add a loading state to Button component)
+                  const userData = await api.signup();
+                  
+                  // Save user data to localStorage
+                  storage.saveUserData(userData);
+                  
+                  // Redirect to onboarding page
+                  router.push('/home/onboarding');
+                } catch (error) {
+                  console.error('Error during signup:', error);
+                  // Could add error handling/notification here
+                }
+              }}
             >
               ⚡ Get Started
             </Button>

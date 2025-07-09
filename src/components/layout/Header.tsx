@@ -1,9 +1,15 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '../ui/Button';
+import { useRouter } from 'next/navigation';
+import { api } from '@/services/api';
+import { storage } from '@/services/storage';
 
 export default function Header() {
+  const router = useRouter();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
       <div className="container mx-auto px-4 py-2 flex items-center justify-between">
@@ -37,10 +43,17 @@ export default function Header() {
         </nav>
         
         <div className="flex items-center space-x-4">
-          <Button 
-            href="https://github.com/yourusername/askexperts.io" 
+          <Button
             variant="primary"
-            external
+            onClick={async () => {
+              try {
+                const userData = await api.signup();
+                storage.saveUserData(userData);
+                router.push('/home/onboarding');
+              } catch (error) {
+                console.error('Error during signup:', error);
+              }
+            }}
           >
             ⚡ Get Started
           </Button>
