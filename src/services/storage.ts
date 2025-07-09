@@ -1,6 +1,8 @@
 import { UserData } from './api';
 
 const USER_DATA_KEY = 'askexperts_user_data';
+const NWC_STRING_KEY = 'askexperts_nwc_string';
+const NWC_CONNECTED_KEY = 'askexperts_nwc_connected';
 
 export const storage = {
   /**
@@ -47,5 +49,47 @@ export const storage = {
    */
   isLoggedIn: (): boolean => {
     return !!storage.getUserData()?.token;
+  },
+
+  /**
+   * Save NWC connection string to localStorage
+   * @param nwcString NWC connection string
+   */
+  saveNwcString: (nwcString: string): void => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(NWC_STRING_KEY, nwcString);
+    }
+  },
+
+  /**
+   * Get NWC connection string from localStorage
+   * @returns NWC connection string or null if not found
+   */
+  getNwcString: (): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(NWC_STRING_KEY);
+    }
+    return null;
+  },
+
+  /**
+   * Save connected NWC string to localStorage
+   * @param nwcString Connected NWC string
+   */
+  saveConnectedNwcString: (nwcString: string): void => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(NWC_CONNECTED_KEY, nwcString);
+    }
+  },
+
+  /**
+   * Get connected NWC string from localStorage
+   * @returns Connected NWC string or null if not found
+   */
+  getConnectedNwcString: (): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(NWC_CONNECTED_KEY);
+    }
+    return null;
   },
 };

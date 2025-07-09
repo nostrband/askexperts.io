@@ -16,29 +16,25 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <div className="max-w-4xl mx-auto py-12">
-      <h1 className="text-3xl font-bold mb-6">Welcome to AskExperts.io</h1>
-      
-      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">Your Dashboard</h2>
-        <p className="text-gray-600 mb-4">
-          You've successfully set up your AskExperts.io account. From here, you can manage your settings,
-          view your usage, and access additional resources.
-        </p>
-        
-        <div className="flex flex-wrap gap-4 mt-6">
+    <div className="flex flex-col h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+        <h1 className="text-xl font-semibold text-[#6A4C93]">AskExperts Chat</h1>
+        <div className="flex space-x-2">
           <Button
-            variant="primary"
+            variant="secondary"
             onClick={() => router.push('/home/onboarding')}
+            className="text-sm px-3 py-1"
           >
-            Configure MCP Server
+            Configure MCP
           </Button>
           
           <Button
             variant="secondary"
             onClick={() => router.push('/home/onboarding/wallet')}
+            className="text-sm px-3 py-1"
           >
-            Wallet Settings
+            Wallet
           </Button>
           
           <Button
@@ -47,9 +43,41 @@ export default function HomePage() {
               storage.clearUserData();
               router.push('/');
             }}
+            className="text-sm px-3 py-1"
           >
             Sign Out
           </Button>
+        </div>
+      </div>
+      
+      {/* Chat messages area (empty for now) */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto">
+          {/* This area will be populated with chat messages in the future */}
+          <div className="text-center text-gray-500 mt-20">
+            <p className="text-lg mb-2">Welcome to AskExperts</p>
+            <p>Ask a question to get started</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Input area */}
+      <div className="border-t border-gray-200 p-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative">
+            <textarea
+              className="w-full border border-gray-300 rounded-lg p-4 pr-28 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-[#6A4C93] shadow-sm"
+              placeholder="Ask experts anything"
+            />
+            <div className="absolute bottom-4 right-4">
+              <Button
+                variant="primary"
+                className="rounded-full px-6 py-2 font-medium"
+              >
+                Ask
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

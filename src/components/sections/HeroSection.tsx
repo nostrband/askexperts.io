@@ -27,6 +27,15 @@ export default function HeroSection() {
               className="text-lg px-8"
               onClick={async () => {
                 try {
+                  // Check if user data already exists in localStorage
+                  const existingUserData = storage.getUserData();
+                  
+                  if (existingUserData) {
+                    // User already signed up, redirect directly to onboarding
+                    router.push('/home/onboarding');
+                    return;
+                  }
+                  
                   // Show loading state (could add a loading state to Button component)
                   const userData = await api.signup();
                   

@@ -2,16 +2,18 @@ import { API_BASE_URL } from '@/config';
 
 export interface SignupResponse {
   token: string;
-  userId: string;
+  pubkey: string;
+  nsec: string;
+  nwc: string;
   mcp_server_url: string;
-  // Add any other fields returned by the API
 }
 
 export interface UserData {
   token: string;
-  userId: string;
+  pubkey: string;
+  nsec: string;
+  nwc: string;
   mcp_server_url: string;
-  // Add any other user data fields
 }
 
 export const api = {
@@ -38,4 +40,5 @@ export const api = {
       throw error;
     }
   },
+
 };

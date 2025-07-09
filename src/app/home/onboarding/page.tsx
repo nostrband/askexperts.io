@@ -26,6 +26,9 @@ export default function OnboardingPage() {
   const [isCopied, setIsCopied] = useState(false);
   const [userData, setUserData] = useState<{
     token: string;
+    pubkey: string;
+    nsec: string;
+    nwc: string;
     mcp_server_url: string;
   } | null>(null);
 
@@ -34,6 +37,11 @@ export default function OnboardingPage() {
     const data = storage.getUserData();
     if (data) {
       setUserData(data);
+      
+      // Save NWC string to localStorage if available
+      if (data.nwc && !storage.getNwcString()) {
+        storage.saveNwcString(data.nwc);
+      }
     } else {
       // Redirect to home if no user data
       router.push("/");
