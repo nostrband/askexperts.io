@@ -219,7 +219,7 @@ export default function WalletPage() {
       
       {/* Info text */}
       <p className="text-lg text-gray-600 mb-8 text-center">
-        Experts are paid for each answer. Topup the built-in wallet or connect your own.
+        Experts are paid for each answer.<br/>Topup the built-in wallet to be able to ask experts.
       </p>
       
       {/* Action buttons */}
@@ -232,14 +232,15 @@ export default function WalletPage() {
         >
           Topup with ₿ {TOPUP_AMOUNT_SATS}
         </Button>
-        
-        <Button
+
+        {/* Remove for now, will implement properly later */}
+        {/* <Button
           variant="secondary"
           onClick={() => setIsConnectModalOpen(true)}
           disabled={isLoading}
         >
           Connect wallet
-        </Button>
+        </Button> */}
       </div>
       
       {/* Continue button - only shown when balance > 0 */}
