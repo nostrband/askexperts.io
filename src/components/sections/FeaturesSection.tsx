@@ -32,7 +32,7 @@ export default function FeaturesSection() {
     {
       icon: "⚡",
       title: "Lightning Network Payments",
-      description: "Instant global payments straight to the expert's wallet."
+      description: "Instant global payments in Bitcoin. Use our built-in wallet or connect any NWC wallet."
     },
     {
       icon: "🤖",

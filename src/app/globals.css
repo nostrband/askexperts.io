@@ -24,6 +24,7 @@
   --font-sans: var(--font-inter);
 }
 
+/* Dark theme disabled temporarily - will be fixed later
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0F172A;
@@ -32,6 +33,7 @@
     --gray: #94A3B8;
   }
 }
+*/
 
 html {
   scroll-behavior: smooth;

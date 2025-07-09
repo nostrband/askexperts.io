@@ -36,11 +36,11 @@ export default function Footer() {
                     GitHub
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="#docs" className="text-gray-400 hover:text-white">
                     Docs
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
             
@@ -48,15 +48,15 @@ export default function Footer() {
               <h4 className="font-semibold mb-3">Community</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Twitter
+                  <Link href="https://primal.net/artur" className="text-gray-400 hover:text-white">
+                    Nostr
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="#" className="text-gray-400 hover:text-white">
                     Discord
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
