@@ -131,7 +131,7 @@ export default function WalletPage() {
         paymentCheckInterval.current = null;
       }
     };
-  }, [paymentHash, paymentStatus]);
+  }, [paymentHash, paymentStatus, checkPaymentStatus]);
   
   const handleTopup = async () => {
     if (!nwcClient) {
