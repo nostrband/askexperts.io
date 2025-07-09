@@ -17,38 +17,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-        <h1 className="text-xl font-semibold text-[#6A4C93]">AskExperts Chat</h1>
-        <div className="flex space-x-2">
-          <Button
-            variant="secondary"
-            onClick={() => router.push('/home/onboarding')}
-            className="text-sm px-3 py-1"
-          >
-            Configure MCP
-          </Button>
-          
-          <Button
-            variant="secondary"
-            onClick={() => router.push('/home/onboarding/wallet')}
-            className="text-sm px-3 py-1"
-          >
-            Wallet
-          </Button>
-          
-          <Button
-            variant="secondary"
-            onClick={() => {
-              storage.clearUserData();
-              router.push('/');
-            }}
-            className="text-sm px-3 py-1"
-          >
-            Sign Out
-          </Button>
-        </div>
-      </div>
+      {/* Header is now in HomeHeader component */}
       
       {/* Chat messages area (empty for now) */}
       <div className="flex-1 overflow-y-auto p-6">

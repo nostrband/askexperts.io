@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 import { storage } from "@/services/storage";
 
-// App options for the dropdown
+// App options to display directly
 const appOptions = [
   { name: "Claude", logo: "/logos/claude.png" },
   { name: "Cline", logo: "/logos/cline.png" },
@@ -18,9 +18,8 @@ const appOptions = [
   { name: "Zed", logo: "/logos/zed.png" },
 ];
 
-export default function OnboardingPage() {
+export default function McpPage() {
   const router = useRouter();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -32,7 +31,13 @@ export default function OnboardingPage() {
     mcp_server_url: string;
   } | null>(null);
 
+  // Check if user is logged in, if not redirect to landing page
   useEffect(() => {
+    if (!storage.isLoggedIn()) {
+      router.push('/');
+      return;
+    }
+
     // Get user data from localStorage
     const data = storage.getUserData();
     if (data) {
@@ -50,12 +55,7 @@ export default function OnboardingPage() {
 
   const handleAppSelect = (appName: string) => {
     setSelectedApp(appName);
-    setIsDropdownOpen(false);
     setIsModalOpen(true);
-  };
-
-  const handleSkip = () => {
-    router.push("/home/onboarding/wallet");
   };
 
   const config = `{
@@ -76,61 +76,24 @@ export default function OnboardingPage() {
         configure a connection to our MCP server.
       </p>
 
-      <div className="flex flex-col gap-4 items-center">
-        <div className="relative w-full">
-          <Button
-            variant="primary"
-            className="w-full flex items-center justify-between"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {appOptions.map((app) => (
+          <button
+            key={app.name}
+            className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => handleAppSelect(app.name)}
           >
-            <span>Configure MCP server</span>
-            <svg
-              className={`w-5 h-5 transition-transform ${
-                isDropdownOpen ? "rotate-180" : ""
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              ></path>
-            </svg>
-          </Button>
-
-          {isDropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-              <ul className="py-2">
-                {appOptions.map((app) => (
-                  <li key={app.name}>
-                    <button
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center"
-                      onClick={() => handleAppSelect(app.name)}
-                    >
-                      <div className="w-8 h-8 relative mr-3">
-                        <Image
-                          src={app.logo}
-                          alt={app.name}
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      {app.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            <div className="w-16 h-16 relative mb-2">
+              <Image
+                src={app.logo}
+                alt={app.name}
+                fill
+                className="object-contain"
+              />
             </div>
-          )}
-        </div>
-
-        <Button variant="secondary" onClick={handleSkip}>
-          Skip for now
-        </Button>
+            <span className="text-center">{app.name}</span>
+          </button>
+        ))}
       </div>
 
       {/* Modal for app configuration */}
@@ -259,15 +222,6 @@ export default function OnboardingPage() {
                 onClick={() => setIsModalOpen(false)}
               >
                 Close
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  router.push("/home/onboarding/wallet");
-                }}
-              >
-                Continue
               </Button>
             </div>
           </div>
