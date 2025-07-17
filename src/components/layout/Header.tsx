@@ -25,13 +25,13 @@ export default function Header() {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="#how-it-works" className="text-gray-600 hover:text-[#0F172A]">
+          <Link href="/#how-it-works" className="text-gray-600 hover:text-[#0F172A]">
             How It Works
           </Link>
-          <Link href="#features" className="text-gray-600 hover:text-[#0F172A]">
+          <Link href="/#features" className="text-gray-600 hover:text-[#0F172A]">
             Features
           </Link>
-          <Link href="#for-builders" className="text-gray-600 hover:text-[#0F172A]">
+          <Link href="/#for-builders" className="text-gray-600 hover:text-[#0F172A]">
             For Builders
           </Link>
           <Link href="https://github.com/nostrband/askexperts" className="text-gray-600 hover:text-[#0F172A]">

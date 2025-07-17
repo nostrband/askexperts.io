@@ -36,6 +36,11 @@ export default function Footer() {
                     GitHub
                   </Link>
                 </li>
+                <li>
+                  <Link href="/about" className="text-gray-400 hover:text-white">
+                    About
+                  </Link>
+                </li>
                 {/* <li>
                   <Link href="#docs" className="text-gray-400 hover:text-white">
                     Docs
