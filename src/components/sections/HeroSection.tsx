@@ -3,13 +3,9 @@
 import React from 'react';
 import Image from 'next/image';
 import Button from '../ui/Button';
-import { useRouter } from 'next/navigation';
-import { api } from '@/services/api';
-import { storage } from '@/services/storage';
 import { showComingSoonDialog } from '@/services/dialog';
 
 export default function HeroSection() {
-  const router = useRouter();
   return (
     <section className="pt-32 pb-16 md:pt-40 md:pb-24">
       <div className="container mx-auto px-4">
