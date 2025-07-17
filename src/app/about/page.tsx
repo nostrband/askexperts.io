@@ -25,10 +25,9 @@ export default function About() {
             
             <p>Q&A platforms are the first to suffer — Stack Overflow is <a href="https://blog.pragmaticengineer.com/stack-overflow-is-almost-dead/" className="text-blue-600 hover:underline">down 70%</a> since ChatGPT. 
               Quora has <a href="https://quorablog.quora.com/New-Funding-from-Andreessen-Horowitz" className="text-blue-600 hover:underline">pivoted</a> to Poe.com.
-              Google execs believe its search will <a href="https://searchengineland.com/google-search-traffic-decline-inevitable-455345" className="text-blue-600 hover:underline">inevitably</a> lose traffic to AI. 
             </p>
             
-            <p>News outlets are <a href="https://futurism.com/google-ai-destroying-news-media">next in line</a>. The rest will be impacted just as much — just not as quickly.</p>
+            <p>News outlets are <a href="https://futurism.com/google-ai-destroying-news-media" className="text-blue-600 hover:underline">next in line</a>. Google execs believe its search will <a href="https://searchengineland.com/google-search-traffic-decline-inevitable-455345" className="text-blue-600 hover:underline">inevitably</a> lose traffic to AI. The rest will be impacted just as much — maybe not as quickly.</p>
             
             <p>Soon, the only clients on your website will be AI crawlers.</p>
             
