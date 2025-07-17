@@ -23,7 +23,7 @@ export default function Footer() {
               </div>
             </Link> */}
             <p className="text-gray-400 mt-2">
-              AskExperts: open marketplace for expert AI.
+              AskExperts: open protocol for expert AI.
             </p>
           </div>
           

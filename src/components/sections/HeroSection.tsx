@@ -6,6 +6,7 @@ import Button from '../ui/Button';
 import { useRouter } from 'next/navigation';
 import { api } from '@/services/api';
 import { storage } from '@/services/storage';
+import { showComingSoonDialog } from '@/services/dialog';
 
 export default function HeroSection() {
   const router = useRouter();
@@ -25,30 +26,7 @@ export default function HeroSection() {
             <Button
               variant="primary"
               className="text-lg px-8"
-              onClick={async () => {
-                try {
-                  // Check if user data already exists in localStorage
-                  const existingUserData = storage.getUserData();
-                  
-                  if (existingUserData) {
-                    // User already signed up, redirect directly to onboarding
-                    router.push('/home/onboarding');
-                    return;
-                  }
-                  
-                  // Show loading state (could add a loading state to Button component)
-                  const userData = await api.signup();
-                  
-                  // Save user data to localStorage
-                  storage.saveUserData(userData);
-                  
-                  // Redirect to onboarding page
-                  router.push('/home/onboarding');
-                } catch (error) {
-                  console.error('Error during signup:', error);
-                  // Could add error handling/notification here
-                }
-              }}
+              onClick={showComingSoonDialog}
             >
               ⚡ Get Started
             </Button>
@@ -63,19 +41,39 @@ export default function HeroSection() {
           </div>
         </div>
         
-        <div className="mt-16 max-w-5xl mx-auto">
-          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 shadow-sm">
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold">Protocol Diagram</h3>
+        <div className="mt-16 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Discovery Protocol Diagram */}
+            <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 shadow-sm">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold">Discovery</h3>
+              </div>
+              <div className="flex justify-center">
+                <div className="relative w-full h-[500px]">
+                  <Image
+                    src="/diagram.svg"
+                    alt="Discovery Protocol Diagram showing AI chat → Expert Discovery → Encrypted Q&A → Lightning payment"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="flex justify-center">
-              <div className="relative w-full max-w-3xl h-[600px]">
-                <Image
-                  src="/diagram.svg"
-                  alt="Protocol Diagram showing AI chat → Expert Discovery → Encrypted Q&A → Lightning payment"
-                  fill
-                  className="object-contain"
-                />
+            
+            {/* Prompting Protocol Diagram */}
+            <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 shadow-sm">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold">Prompting</h3>
+              </div>
+              <div className="flex justify-center">
+                <div className="relative w-full h-[500px]">
+                  <Image
+                    src="/prompt-diagram.svg"
+                    alt="Prompting Protocol Diagram"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
               </div>
             </div>
           </div>

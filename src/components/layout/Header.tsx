@@ -7,6 +7,7 @@ import Button from '../ui/Button';
 import { useRouter } from 'next/navigation';
 import { api } from '@/services/api';
 import { storage } from '@/services/storage';
+import { showComingSoonDialog } from '@/services/dialog';
 
 export default function Header() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function Header() {
           <Link href="#for-builders" className="text-gray-600 hover:text-[#0F172A]">
             For Builders
           </Link>
-          <Link href="#docs" className="text-gray-600 hover:text-[#0F172A]">
+          <Link href="https://github.com/nostrband/askexperts" className="text-gray-600 hover:text-[#0F172A]">
             Docs
           </Link>
         </nav>
@@ -45,15 +46,7 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <Button
             variant="primary"
-            onClick={async () => {
-              try {
-                const userData = await api.signup();
-                storage.saveUserData(userData);
-                router.push('/home/onboarding');
-              } catch (error) {
-                console.error('Error during signup:', error);
-              }
-            }}
+            onClick={showComingSoonDialog}
           >
             ⚡ Get Started
           </Button>

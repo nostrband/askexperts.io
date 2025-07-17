@@ -5,8 +5,8 @@ export default function CommunitySection() {
   const communityActions = [
     "Join the conversation",
     "Review the protocol",
-    "Self-host your Expert or MCP server",
-    "Suggest features or contribute to the open code"
+    "Build your Experts",
+    "Send PRs"
   ];
 
   return (
