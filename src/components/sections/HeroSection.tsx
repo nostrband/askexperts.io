@@ -27,10 +27,11 @@ export default function HeroSection() {
               ⚡ Get Started
             </Button>
             
-            <Button 
-              href="#how-it-works" 
+            <Button
+              href="https://github.com/nostrband/askexperts"
               variant="secondary"
               className="text-lg px-8"
+              external={true}
             >
               How It Works →
             </Button>

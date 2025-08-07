@@ -18,12 +18,14 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
+        {/* Commented out for closed beta
         <HowItWorksSection />
         <FeaturesSection />
         <ForBuildersSection />
-        {/* <CTASection />
-        <AudienceSection /> */}
+        <CTASection />
+        <AudienceSection />
         <CommunitySection />
+        */}
       </main>
       <Footer />
     </>

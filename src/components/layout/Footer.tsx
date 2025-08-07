@@ -27,6 +27,7 @@ export default function Footer() {
             </p>
           </div>
           
+          {/* Commented out for closed beta
           <div className="flex flex-wrap gap-8">
             <div>
               <h4 className="font-semibold mb-3">Resources</h4>
@@ -41,11 +42,11 @@ export default function Footer() {
                     About
                   </Link>
                 </li>
-                {/* <li>
+                <li>
                   <Link href="#docs" className="text-gray-400 hover:text-white">
                     Docs
                   </Link>
-                </li> */}
+                </li>
               </ul>
             </div>
             
@@ -57,14 +58,15 @@ export default function Footer() {
                     Nostr
                   </Link>
                 </li>
-                {/* <li>
+                <li>
                   <Link href="#" className="text-gray-400 hover:text-white">
                     Discord
                   </Link>
-                </li> */}
+                </li>
               </ul>
             </div>
           </div>
+          */}
         </div>
         
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
@@ -72,6 +74,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()}. All rights reserved.
           </p>
           
+          {/* Commented out for closed beta
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="#" className="text-gray-400 hover:text-white text-sm">
               Privacy Policy
@@ -80,6 +83,7 @@ export default function Footer() {
               Terms of Service
             </Link>
           </div>
+          */}
         </div>
       </div>
     </footer>

@@ -24,6 +24,7 @@ export default function Header() {
           </div>
         </Link>
         
+        {/* Commented out for closed beta
         <nav className="hidden md:flex items-center space-x-6">
           <Link href="/#how-it-works" className="text-gray-600 hover:text-[#0F172A]">
             How It Works
@@ -38,6 +39,7 @@ export default function Header() {
             Docs
           </Link>
         </nav>
+        */}
         
         <div className="flex items-center space-x-4">
           <Button
