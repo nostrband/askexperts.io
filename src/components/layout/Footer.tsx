@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+// import Link from 'next/link'; // Commented out as it's not currently used
 
 export default function Footer() {
   return (
